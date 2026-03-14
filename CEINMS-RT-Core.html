@@ -43,8 +43,8 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW+WenKai:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"LXGW WenKai";--md-code-font:"JetBrains Mono"}</style>
       
     
     
@@ -518,11 +518,11 @@
 </ul>
 <p><strong>Step 3：核心建模计算（实时并行执行，总延迟 &lt; 10 ms）</strong></p>
 <p><strong>（1）肌肉激活动力学</strong></p>
-<p>基于归一化 EMG 包络 <span class="arithmatex">\(e_m\)</span>，通过非线性指数函数计算肌肉激活度 <span class="arithmatex">\(a_m\)</span>：
-$$
+<p>基于归一化 EMG 包络 <span class="arithmatex">\(e_m\)</span>，通过非线性指数函数计算肌肉激活度 <span class="arithmatex">\(a_m\)</span>：</p>
+<div class="arithmatex">\[
 a_m=\frac{e^{Ae_m}-1}{e^{A}-1}
-$$
-其中 A 为校准后的形状因子（-2.999~-0.001），核心优化为<strong>移除人工机电延迟滤波</strong>，避免双重延迟叠加。</p>
+\]</div>
+<p>其中 A 为校准后的形状因子（-2.999~-0.001），核心优化为<strong>移除人工机电延迟滤波</strong>，避免双重延迟叠加。</p>
 <p><strong>（2）肌肉肌腱运动学</strong></p>
 <p>基于关节角度，通过<strong>多维三次 B 样条模型</strong>直接映射得到 MTU 长度 <span class="arithmatex">\(l_{mt}\)</span>、关节力矩臂 <span class="arithmatex">\(r_{mt}\)</span>，无需复杂运动学推导。</p>
 <p><strong>（3）肌肉肌腱动力学</strong></p>
@@ -531,11 +531,11 @@ $$
 <li><strong>刚性肌腱（快速计算）</strong>：假设肌腱长度固定为松弛长度，MTU 长度变化仅由肌纤维长度决定，无需求解复杂方程；</li>
 <li><strong>弹性肌腱（高精度）</strong>：通过 Brent 根求解器迭代平衡肌肉力与肌腱力，考虑肌腱非线性力学特性。</li>
 </ul>
-<p>核心计算逻辑：
-$$
+<p>核心计算逻辑：</p>
+<div class="arithmatex">\[
 F_{\text{MTU}} = \left[ a_m f(\tilde{l}_m) + f_P(\tilde{l}_m) \right] F_m^{\text{max}} \cdot \cos(\phi(l_m))
-$$
-其中 <span class="arithmatex">\(f(\tilde{l}_m)\)</span>（主动力 - 长度关系）、<span class="arithmatex">\(f_P(\tilde{l}_m)\)</span>（被动力 - 长度关系）为归一化本构曲线，<span class="arithmatex">\(\phi(l_m)\)</span>为瞬时羽状角。</p>
+\]</div>
+<p>其中 <span class="arithmatex">\(f(\tilde{l}_m)\)</span>（主动力 - 长度关系）、<span class="arithmatex">\(f_P(\tilde{l}_m)\)</span>（被动力 - 长度关系）为归一化本构曲线，<span class="arithmatex">\(\phi(l_m)\)</span>为瞬时羽状角。</p>
 <p><strong>（4）关节力矩计算</strong></p>
 <p>对每个关节自由度，汇总跨关节 MTU 的贡献（MTU 力 × 力矩臂），求和得到关节净力矩。</p>
 <h3 id="12">1.2 复现逻辑</h3>
@@ -607,12 +607,12 @@ $$
 <li><strong>力-长-速关系</strong>：在 <code>CeinmsCurves</code> 中实现了高斯型主动力-长曲线和指数型被动力-长曲线。</li>
 <li><strong>刚性肌腱解析解（核心提速点）</strong>：
   若采用弹性肌腱（Elastic Tendon），需使用 Brent 方法（<code>scipy.optimize.brentq</code>）寻找使得肌肉力与肌腱力平衡的纤维长度，此过程在 Python 中耗时极大。复现中默认开启 <strong>Stiff Tendon</strong> 模式：
-  假设肌腱不发生形变（<span class="arithmatex">\(l_t = l_{slack}^s\)</span>），通过简单的几何关系即可直接求解肌肉纤维长度 <span class="arithmatex">\(l_m\)</span>：
-  $$
-  l_m \cos(\phi) = l_{mtu} - l_{slack}^s
-  $$
-  结合假设肌肉体积守恒（肌肉厚度 <span class="arithmatex">\(w\)</span> 恒定），我们彻底避免了迭代求解，将单块肌肉的计算时间压缩。</li>
+  假设肌腱不发生形变（<span class="arithmatex">\(l_t = l_{slack}^s\)</span>），通过简单的几何关系即可直接求解肌肉纤维长度 <span class="arithmatex">\(l_m\)</span>：</li>
 </ul>
+<p>$$
+  l_m \cos(\phi) = l_{mtu} - l_{slack}^s
+  $$</p>
+<p>结合假设肌肉体积守恒（肌肉厚度 <span class="arithmatex">\(w\)</span> 恒定），我们彻底避免了迭代求解，将单块肌肉的计算时间压缩。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 提取自 ceinms_core_raw.py: 肌肉肌腱核心物理求解 (MTUSolver)</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span> <span class="n">l_mtu_current</span><span class="p">):</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stiff_tendon</span><span class="p">:</span>
@@ -792,7 +792,9 @@ $$
     
       <script src="assets/javascripts/bundle.ad660dcc.min.js"></script>
       
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

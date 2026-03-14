@@ -43,8 +43,8 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW+WenKai:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"LXGW WenKai";--md-code-font:"JetBrains Mono"}</style>
       
     
     
@@ -514,10 +514,10 @@
 <p>在优化器启动前，先遍历一次实验数据，将所有参与校准的肌肉（如腓肠肌、比目鱼肌、胫骨前肌等 10 块下肢关键肌肉）在整个时间序列上的<strong>肌肉肌腱总长度 (<span class="arithmatex">\(l_{mtu}\)</span>)</strong> 和 <strong>关于髋/膝/踝的瞬时力臂 (<span class="arithmatex">\(r\)</span>)</strong> 提取并存入内存字典 <code>kinematics</code> 中。</p>
 <p>在随后的优化迭代（<code>loss_function</code>）中，彻底剥离了 OpenSim 依赖，纯粹进行矩阵运算与物理求解，将单次迭代的耗时从秒级压缩至毫秒级。</p>
 <h3 id="22">2.2 目标函数构建</h3>
-<p>构建了计算预测力矩与参考力矩残差的 Loss 函数。为保证多自由度的综合精度，目标函数定义为膝关节与踝关节 RMSE 的总和：
-$$
+<p>构建了计算预测力矩与参考力矩残差的 Loss 函数。为保证多自由度的综合精度，目标函数定义为膝关节与踝关节 RMSE 的总和：</p>
+<div class="arithmatex">\[
  Loss = RMSE_{knee} + RMSE_{ankle} 
-$$</p>
+\]</div>
 <blockquote>
 <p>注：代码中增加了相关系数检测，自动校正 OpenSim 与本地物理引擎间可能存在的坐标系符号反转问题。</p>
 </blockquote>
@@ -680,7 +680,9 @@ $$</p>
     
       <script src="assets/javascripts/bundle.ad660dcc.min.js"></script>
       
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

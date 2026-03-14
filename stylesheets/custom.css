@@ -1,0 +1,18 @@
+/* 优化霞骛文楷的全局显示（文楷字重略轻，稍微提升一点清晰度和行高会更美观） */
+body {
+    font-family: "LXGW WenKai", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 强制所有标题也使用文楷 */
+h1, h2, h3, h4, h5, h6 {
+    font-family: "LXGW WenKai", sans-serif !important;
+    font-weight: 700;
+}
+
+/* 优化 JetBrains Mono 代码块表现 */
+code, pre, kbd {
+    font-family: "JetBrains Mono", monospace !important;
+    font-size: 0.9em; /* 代码字体通常偏大，略微缩小更精致 */
+}
