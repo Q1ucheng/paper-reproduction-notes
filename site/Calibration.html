@@ -1,0 +1,642 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Qiucheng Zhao">
+      
+      
+      
+        <link rel="prev" href="CEINMS-RT-Core.html">
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
+    
+    
+      
+        <title>参数校准算法 - CEINMS-RT 复现报告</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ceinms-rt" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="index.html" title="CEINMS-RT 复现报告" class="md-header__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CEINMS-RT 复现报告
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              参数校准算法
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="CEINMS-RT-Core.html" class="md-tabs__link">
+        
+  
+    
+  
+  核心算法复现
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="Calibration.html" class="md-tabs__link">
+        
+  
+    
+  
+  参数校准算法
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="CEINMS-RT 复现报告" class="md-nav__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    CEINMS-RT 复现报告
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CEINMS-RT-Core.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    核心算法复现
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    参数校准算法
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="Calibration.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    参数校准算法
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 校准算法理论
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 算法设计与工程优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 算法设计与工程优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 运动学预计算机制
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 目标函数构建
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 双引擎求解器集成
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 核心代码解析
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 初步校准结果
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 分析
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 下一步计划
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="ceinms-rt">CEINMS-RT 参数校准算法复现与验证</h1>
+<h2 id="1">1. 校准算法理论</h2>
+<p>在完成上一节的 CEINMS-RT 正向动力学推演后，发现使用 OpenSim 默认肌肉参数（ <code>gait2392</code> 通用模型）直接驱动当前受试者的步态数据时，预测的关节力矩在幅值上与逆动力学（Inverse Dynamics, ID）参考值存在一定偏差。</p>
+<p>我想进一步复现校准算法看看是否能降低误差，而且原论文 <em>Section III.B (CEINMS-RT Calibration)</em> 明确指出，EMG 驱动模型必须经过个性化校准，以适应不同受试者的<strong>解剖结构差异</strong>和<strong>肌肉力量生成能力</strong>。</p>
+<ul>
+<li><strong>优化目标</strong>：最小化 CEINMS-RT 估计的关节力矩与参考力矩（通过 ID 计算获得）之间的均方根误差（RMSE）。</li>
+<li><strong>优化变量</strong>：原论文包括了肌肉力量系数（Strength coefficient <span class="arithmatex">\(\gamma\)</span>）、最佳肌纤维长度（<span class="arithmatex">\(l_{opt}^m\)</span>）、肌腱松弛长度（<span class="arithmatex">\(l_{slack}^t\)</span>）以及非线性激活形状因子（<span class="arithmatex">\(A\)</span>）。</li>
+<li><strong>优化算法</strong>：原论文采用<strong>模拟退火算法</strong>进行全局寻优，以跳出局部极小值。</li>
+</ul>
+<p>在本节校准算法复现中，为了验证算法架构的可行性，我<strong>优先针对核心变量——肌肉力量系数 <span class="arithmatex">\(\gamma\)</span>（即对 <span class="arithmatex">\(F_{max}\)</span> 进行缩放）展开了全局优化实验</strong>，缩放边界设定为论文中建议的 <code>[0.5, 2.0]</code>（即 0.5 ≤ <span class="arithmatex">\(\gamma\)</span> ≤ 2.0）。</p>
+<hr />
+<h2 id="2">2. 算法设计与工程优化</h2>
+<p>在 Python 环境下进行成百上千次的模型迭代寻优，如果每次迭代都调用 OpenSim 接口读取运动学状态，耗时将是灾难性的。为此，在 <code>calibration_raw.py</code> 中，我进行了以下关键的工程化设计：</p>
+<h3 id="21">2.1 运动学预计算机制</h3>
+<p>在优化器启动前，先遍历一次实验数据，将所有参与校准的肌肉（如腓肠肌、比目鱼肌、胫骨前肌等 10 块下肢关键肌肉）在整个时间序列上的<strong>肌肉肌腱总长度 (<span class="arithmatex">\(l_{mtu}\)</span>)</strong> 和 <strong>关于髋/膝/踝的瞬时力臂 (<span class="arithmatex">\(r\)</span>)</strong> 提取并存入内存字典 <code>kinematics</code> 中。</p>
+<p>在随后的优化迭代（<code>loss_function</code>）中，彻底剥离了 OpenSim 依赖，纯粹进行矩阵运算与物理求解，将单次迭代的耗时从秒级压缩至毫秒级。</p>
+<h3 id="22">2.2 目标函数构建</h3>
+<p>构建了计算预测力矩与参考力矩残差的 Loss 函数。为保证多自由度的综合精度，目标函数定义为膝关节与踝关节 RMSE 的总和：
+$$
+ Loss = RMSE_{knee} + RMSE_{ankle} 
+$$</p>
+<blockquote>
+<p>注：代码中增加了相关系数检测，自动校正 OpenSim 与本地物理引擎间可能存在的坐标系符号反转问题。</p>
+</blockquote>
+<h3 id="23">2.3 双引擎求解器集成</h3>
+<p>为了兼顾日常调试速度与最终结果精度，脚本集成了两种优化器：
+1. <strong>L-BFGS-B</strong>：基于梯度的拟牛顿法，收敛极快，适合跑通管线和代码 Debug。
+2. <strong>Simulated Annealing (模拟退火)</strong>：采用 <code>scipy.optimize.dual_annealing</code>。完美对齐了原论文的方法，能够有效克服肌肉冗余带来的非凸优化（Non-convex optimization）陷阱，寻找全局最优解。</p>
+<hr />
+<h2 id="3">3. 核心代码解析</h2>
+<p>展示校准器中最为核心的<strong>目标函数计算</strong>与<strong>优化器调用</strong>逻辑。通过封装 <code>OptimizationTracker</code>，我们还实现了实时的终端 Loss 下降监控。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 提取自 calibration_raw.py: 目标函数定义</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_factors</span><span class="p">):</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="sd">    目标函数：传入当前的肌力缩放系数向量，返回总的力矩预测误差</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="c1"># 根据当前 scale_factors 前向推演力矩</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">pred_knee</span><span class="p">,</span> <span class="n">pred_ankle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_moments</span><span class="p">(</span><span class="n">scale_factors</span><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="c1"># 截取有效长度并与逆动力学参考值对齐</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pred_knee</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id_df</span><span class="p">))</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">ref_knee</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_df</span><span class="p">[</span><span class="s1">&#39;knee_angle_r_moment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">ref_ankle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_df</span><span class="p">[</span><span class="s1">&#39;ankle_angle_r_moment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="c1"># 计算各个关节的 RMSE</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">rmse_knee</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">ref_knee</span><span class="p">,</span> <span class="n">pred_knee</span><span class="p">[:</span><span class="n">n</span><span class="p">]))</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">rmse_ankle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">ref_ankle</span><span class="p">,</span> <span class="n">pred_ankle</span><span class="p">[:</span><span class="n">n</span><span class="p">]))</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="c1"># 汇总为总 Loss</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">total_loss</span> <span class="o">=</span> <span class="n">rmse_knee</span> <span class="o">+</span> <span class="n">rmse_ankle</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="c1"># 更新进度</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span><span class="p">:</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">total_loss</span><span class="p">)</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    <span class="k">return</span> <span class="n">total_loss</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 提取自 calibration_raw.py: 优化器配置</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">if</span> <span class="n">OPTIMIZER</span> <span class="o">==</span> <span class="s1">&#39;SimulatedAnnealing&#39;</span><span class="p">:</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="c1"># 采用 SciPy 的 dual_annealing 实现模拟退火全局优化</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">dual_annealing</span><span class="p">(</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>             <span class="c1"># 缩放边界: [0.5, 2.0]</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="n">maxiter</span><span class="o">=</span><span class="n">MAX_ITERATIONS</span><span class="p">,</span>    <span class="c1"># 论文中提到校准耗时较长，控制最大迭代</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">initial_temp</span><span class="o">=</span><span class="mf">5230.0</span><span class="p">,</span>       <span class="c1"># 初始退火温度</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">visit</span><span class="o">=</span><span class="mf">2.62</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">accept</span><span class="o">=-</span><span class="mf">5.0</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="4">4. 初步校准结果</h2>
+<p>运行 <code>calibration_raw.py</code> 后，程序不仅将求解出的个性化参数（<code>f_max</code>, <code>scale_factor</code> 等）保存为 <code>calibrated_muscle_params.json</code>，供前向预测脚本 <code>run_ceinms_raw.py</code> 加载使用，还输出了校准前后的量化对比。</p>
+<p>终端打印如下：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>CEINMS-RT<span class="w"> </span>Calibration
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="o">[</span>info<span class="o">]</span><span class="w"> </span>Loaded<span class="w"> </span>model<span class="w"> </span>3DGaitModel2392<span class="w"> </span>from<span class="w"> </span>file<span class="w"> </span>gait2392.osim
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Precomputing<span class="w"> </span>kinematics...
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Starting<span class="w"> </span>calibration<span class="w"> </span>using<span class="w"> </span>SimulatedAnnealing...
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Calibrating<span class="w"> </span><span class="o">(</span>SimulatedAnnealing<span class="o">)</span>:<span class="w"> </span>2276iter<span class="w"> </span><span class="o">[</span><span class="m">2</span>:26:44,<span class="w">  </span><span class="m">3</span>.87s/iter,<span class="w"> </span><span class="nv">Loss</span><span class="o">=</span><span class="m">37</span>.6934,<span class="w"> </span><span class="nv">Best</span><span class="o">=</span><span class="m">27</span>.3429,<span class="w"> </span><span class="nv">Time</span><span class="o">=</span><span class="m">8804</span>.1s<span class="o">]</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Running<span class="w"> </span>final<span class="w"> </span>validation...
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>VALIDATION<span class="w"> </span>RESULTS
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>Metric<span class="w">         </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span><span class="o">(</span>Original<span class="o">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span><span class="o">(</span>Calibrated<span class="o">)</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>RMSE<span class="w"> </span><span class="o">(</span>Nm<span class="o">)</span><span class="w">      </span><span class="p">|</span><span class="w"> </span><span class="m">13</span>.3076<span class="w">         </span><span class="p">|</span><span class="w"> </span><span class="m">8</span>.2704
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>R²<span class="w">             </span><span class="p">|</span><span class="w"> </span><span class="m">0</span>.2646<span class="w">          </span><span class="p">|</span><span class="w"> </span><span class="m">0</span>.3056
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>Metric<span class="w">         </span><span class="p">|</span><span class="w"> </span>Ankle<span class="w"> </span><span class="o">(</span>Original<span class="o">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>Ankle<span class="w"> </span><span class="o">(</span>Calibrated<span class="o">)</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>RMSE<span class="w"> </span><span class="o">(</span>Nm<span class="o">)</span><span class="w">      </span><span class="p">|</span><span class="w"> </span><span class="m">24</span>.8725<span class="w">         </span><span class="p">|</span><span class="w"> </span><span class="m">19</span>.0725
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>R²<span class="w">             </span><span class="p">|</span><span class="w"> </span><span class="m">0</span>.5919<span class="w">          </span><span class="p">|</span><span class="w"> </span><span class="m">0</span>.5934
+</code></pre></div></p>
+<hr />
+<h2 id="5">5. 分析</h2>
+<p>仅通过对 10 块主要肌肉的 <span class="arithmatex">\(F_{max}\)</span> 进行全局比例缩放（力量系数校准），系统预测的关节力矩误差（RMSE）就产生了明显下降：</p>
+<ul>
+<li><strong>右膝关节</strong>：归一化的均方误差从 <strong>0.1774 Nm/kg</strong> 降至 <strong>0.1104 Nm/kg</strong></li>
+<li><strong>右踝关节</strong>：归一化的均方误差从 <strong>0.3316 Nm/kg</strong> 降至 <strong>0.2543 Nm/kg</strong></li>
+</ul>
+<p><span class="arithmatex">\(R^2\)</span> 也有所提高，这充分验证了 CEINMS-RT 论文中强调的“Subject-specific calibration”对于真实力矩估计的绝对必要性。</p>
+<p>但是存在问题：</p>
+<ul>
+<li>
+<p>我当前只对力量系数校准了，但是整个脚本运行的时间为<strong>2小时26分44秒</strong>，甚至超出了原文中的参考校准时长（20分钟~120分钟）</p>
+</li>
+<li>
+<p>校准脚本中输出的误差分析看上去很好，但是我将校准生成的<code>json</code>参数文件应用的上节的脚本中计算发现：</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a> # 计算结果很好
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a> Knee  - RMSE Normalized: 0.1120 Nm/kg
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a> Ankle - RMSE Normalized: 0.2533 Nm/kg
+</code></pre></div>
+<p><img alt="" src="pics/Cli.png" /></p>
+<p>力矩可视化之后发现看上去波动变大了，并且仍然存在个别异常值。</p>
+<h2 id="6">6. 下一步计划</h2>
+<ul>
+<li>本次复现主要实现了肌肉强度（<span class="arithmatex">\(\gamma\)</span>）的优化。但在真实生理学中，受试者的<strong>最佳肌纤维长度 (<span class="arithmatex">\(l_{opt}\)</span>)</strong> 和 <strong>肌腱松弛长度 (<span class="arithmatex">\(l_{slack}\)</span>)</strong> 对肌肉力矩的非线性影响尤为敏感。下一步，我希望把 <span class="arithmatex">\(l_{opt}\)</span> (<span class="arithmatex">\(\pm 2.5\%\)</span>) 和 <span class="arithmatex">\(l_{slack}\)</span> (<span class="arithmatex">\(\pm 5\%\)</span>) 加入到优化向量 <code>scale_factors</code> 中。</li>
+<li><strong>优化模拟退火算法</strong>：目前的校准的脚本使用的是 <code>scipy.optimize.dual_annealing</code>，这是一个跑在 CPU 上的<strong>串行算法</strong>。我准备尝试一下把物理引擎变成 PyTorch，实现<strong>并行模拟退火</strong> ，利用 GPU 同时跑 10,000 条独立的模拟退火链。效率上会快很多。</li>
+<li>在阅读原论文 <em>Section V.A</em> 时，作者提到传统的模拟退火算法可能耗时数小时。他们未来的迭代方向是引入<strong>“可微物理引擎 (Differentiable physics)”</strong>。既然我已经用 Python 重写了整个 MTU 物理模块（如果能实现GPU加速就更好了），接下来完全可以利用自动微分（Auto-diff）技术，将原本无梯度的退火优化替换为极速的随机梯度下降（SGD）。</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.top", "toc.integrate"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.ad660dcc.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
