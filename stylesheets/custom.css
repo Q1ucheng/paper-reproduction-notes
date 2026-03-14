@@ -13,7 +13,7 @@ body, input, button, textarea, .md-typeset, .md-nav__link, .md-header__title, .m
 /* 优化标题字重（文楷本身偏细，标题需要加粗） */
 .md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4, .md-typeset h5, .md-typeset h6 {
     font-family: var(--md-text-font) !important;
-    font-weight: 700 !important;
+    font-weight: 900 !important;
 }
 
 /* 保持 JetBrains Mono 优美的代码块显示 */
