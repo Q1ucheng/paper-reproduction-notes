@@ -8,6 +8,7 @@ body, input, button, textarea, .md-typeset, .md-nav__link, .md-header__title, .m
     font-family: var(--md-text-font) !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-text-stroke: 0.1px currentColor;
 }
 
 /* 优化标题字重（文楷本身偏细，标题需要加粗） */
@@ -19,5 +20,25 @@ body, input, button, textarea, .md-typeset, .md-nav__link, .md-header__title, .m
 /* 保持 JetBrains Mono 优美的代码块显示 */
 code, pre, kbd {
     font-family: "JetBrains Mono", monospace !important;
-    font-size: 0.9em;
+    font-size: 1em;
+}
+
+/* =========================================
+   字体大小与行距微调
+========================================= */
+
+/* 1. 放大正文阅读区域的字体（MkDocs 默认大概是 16px） */
+.md-typeset {
+    font-size: 18px !important;  /* 如果觉得还不够大，可以改成 18px */
+    line-height: 1.8 !important; /* ⚠️ 核心细节：字体变大后，行距必须同步拉开，排版才会呼吸透气 */
+}
+
+/* 2. 放大左侧/右侧目录导航栏的字体（MkDocs 默认大概是 14px） */
+.md-nav__link {
+    font-size: 15px !important;  /* 稍微调大一号，侧边栏看起来更清晰 */
+}
+
+/* 3. （可选）如果你觉得顶部导航栏的网站标题太小，也可以在这里调 */
+.md-header__title {
+    font-size: 1.2rem !important; 
 }
