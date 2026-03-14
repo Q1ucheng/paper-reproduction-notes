@@ -53,9 +53,7 @@ code, pre, kbd {
     
     /* 👇 核心魔法：普通文字的描边我们设置了 0.25px，这里我们把它翻倍甚至更多，拉开粗细对比！ */
     -webkit-text-stroke: 0.45px currentColor !important;
-    
-    /* （可选魔法）如果你觉得光靠描边还不够厚重，可以解除下面这行代码的注释，加一层极微弱的阴影 */
-    text-shadow: 0 0 0.5px currentColor !important;
+
 }
 
 /* 同样，确保各级标题也足够粗犷醒目 */

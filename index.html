@@ -20,7 +20,7 @@
     
     
       
-        <title>CEINMS-RT 复现报告</title>
+        <title>CEINMS-RT 复现记录</title>
       
     
     
@@ -41,14 +41,10 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+Simplified+Chinese:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Noto Serif Simplified Chinese";--md-code-font:"JetBrains Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"JetBrains Mono"}</style>
       
     
-    
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/style.css">
-    
-      <link rel="stylesheet" href="stylesheets/custom.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -74,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ceinms-rt" class="md-skip">
+        <a href="#welcome" class="md-skip">
           跳转至
         </a>
       
@@ -88,7 +84,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="页眉">
-    <a href="index.html" title="CEINMS-RT 复现报告" class="md-header__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+    <a href="index.html" title="CEINMS-RT 复现记录" class="md-header__button md-logo" aria-label="CEINMS-RT 复现记录" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -102,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CEINMS-RT 复现报告
+            CEINMS-RT 复现记录
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -266,13 +262,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="CEINMS-RT 复现报告" class="md-nav__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+    <a href="index.html" title="CEINMS-RT 复现记录" class="md-nav__button md-logo" aria-label="CEINMS-RT 复现记录" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    CEINMS-RT 复现报告
+    CEINMS-RT 复现记录
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -430,7 +426,7 @@
                   
 
 
-<h1 id="ceinms-rt">CEINMS-RT 复现</h1>
+<h1 id="welcome">Welcome !</h1>
 <h2 id="_1">简介与复现目标</h2>
 <p>基于论文 <em>《CEINMS-RT: an open-source framework for the continuous neuro-mechanical model-based control of wearable robots》</em></p>
 <p><strong>论文开源资源：</strong></p>
@@ -446,8 +442,8 @@
 <li><strong>验证其实时性优化策略</strong>：原论文的核心贡献在于打破了离线优化模型的算力瓶颈。本次复现重点实现了其提到的两大提速策略：</li>
 <li><strong>运动学查表查值</strong>：离线拟合多维 B 样条曲线（B-splines），将复杂的 OpenSim 肌肉运动学计算转化为 O(1) 复杂度的实时查询。</li>
 <li><strong>刚性肌腱假设（Stiff Tendon）</strong>：消除弹性肌腱模型中耗时的隐式微分方程，代之以解析解。</li>
-<li><strong>精度评估</strong>：将前向估计的关节力矩与 OpenSim 逆动力学（Inverse Dynamics, ID）的计算结果进行对比分析。</li>
-<li><strong>肌肉参数校准</strong>。</li>
+<li><strong>精度评估</strong>：将前向估计的关节力矩与 OpenSim ID的计算结果进行对比分析。</li>
+<li><strong>肌肉参数校准</strong>：通过模拟退火算法，最小化前向估计与 OpenSim ID 结果的均方误差（MSE）。</li>
 </ol>
 <h2 id="_2">导航</h2>
 <p>按照时间顺序我的复现进度如下：</p>
@@ -527,8 +523,6 @@
     
     
       <script src="assets/javascripts/bundle.ad660dcc.min.js"></script>
-      
-        <script src="javascripts/mathjax.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
       
