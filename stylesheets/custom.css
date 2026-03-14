@@ -1,18 +1,23 @@
-/* 优化霞骛文楷的全局显示（文楷字重略轻，稍微提升一点清晰度和行高会更美观） */
-body {
-    font-family: "LXGW WenKai", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+/* 暴力覆盖 MkDocs Material 主题的底层全局字体变量 */
+:root {
+    --md-text-font: "LXGW WenKai", "Microsoft YaHei", sans-serif !important;
+}
+
+/* 确保网页的所有角落（侧边栏、顶部导航、正文等）都强制应用文楷 */
+body, input, button, textarea, .md-typeset, .md-nav__link, .md-header__title, .md-source__repository {
+    font-family: var(--md-text-font) !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* 强制所有标题也使用文楷 */
-h1, h2, h3, h4, h5, h6 {
-    font-family: "LXGW WenKai", sans-serif !important;
-    font-weight: 700;
+/* 优化标题字重（文楷本身偏细，标题需要加粗） */
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4, .md-typeset h5, .md-typeset h6 {
+    font-family: var(--md-text-font) !important;
+    font-weight: 700 !important;
 }
 
-/* 优化 JetBrains Mono 代码块表现 */
+/* 保持 JetBrains Mono 优美的代码块显示 */
 code, pre, kbd {
     font-family: "JetBrains Mono", monospace !important;
-    font-size: 0.9em; /* 代码字体通常偏大，略微缩小更精致 */
+    font-size: 0.9em;
 }
