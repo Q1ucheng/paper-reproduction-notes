@@ -1,0 +1,799 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Qiucheng Zhao">
+      
+      
+      
+        <link rel="prev" href="index.html">
+      
+      
+        <link rel="next" href="Calibration.html">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
+    
+    
+      
+        <title>核心算法复现 - CEINMS-RT 复现报告</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ceinms-rt" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="index.html" title="CEINMS-RT 复现报告" class="md-header__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CEINMS-RT 复现报告
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              核心算法复现
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="CEINMS-RT-Core.html" class="md-tabs__link">
+        
+  
+    
+  
+  核心算法复现
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="Calibration.html" class="md-tabs__link">
+        
+  
+    
+  
+  参数校准算法
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="CEINMS-RT-docker.html" class="md-tabs__link">
+        
+  
+    
+  
+  Linux上的docker部署
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="CEINMS-RT 复现报告" class="md-nav__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    CEINMS-RT 复现报告
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    核心算法复现
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="CEINMS-RT-Core.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    核心算法复现
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 算法逻辑与实现
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. 算法逻辑与实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-ceinms-rt" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 CEINMS-RT 算法核心原理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 复现逻辑
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 复现逻辑">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.1 离线阶段：多维 B 样条运动学代理模型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.2 实时阶段模块 1：激活动力学
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#123-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.3 实时阶段模块 2：肌肉肌腱动力学
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#124-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2.4 实时阶段模块 3：关节力矩计算
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 复现结果
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 分析与讨论
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Calibration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    参数校准算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CEINMS-RT-docker.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linux上的docker部署
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="ceinms-rt">CEINMS-RT 核心算法复现报告</h1>
+<h2 id="1">1. 算法逻辑与实现</h2>
+<h3 id="11-ceinms-rt">1.1 CEINMS-RT 算法核心原理</h3>
+<p><strong>Step 1：参数配置与个体校准</strong></p>
+<ul>
+<li><strong>参数配置</strong>：定义关节自由度、肌肉肌腱单元（MTU）数量、肌腱模型类型（弹性 / 刚性）等核心参数，适配不同实验场景；</li>
+<li><strong>个体校准</strong>：采用模拟退火算法调整 MTU 关键参数（最大等长力、最优肌纤维长度、肌腱松弛长度、羽状角），最小化模型力矩与实测参考力矩的误差，同时施加生理约束（如归一化肌纤维长度范围）。</li>
+</ul>
+<p><strong>Step 2：实时数据输入与预处理</strong></p>
+<ul>
+<li><strong>数据采集</strong>：接收EMG 信号（反映肌肉神经驱动）和关节角度（反映骨骼运动状态）；</li>
+<li><strong>EMG 预处理</strong>：带通滤波（10~450 Hz）→ 全波整流 → 低通滤波（6 Hz）→ 归一化（0~1 范围），输出归一化 EMG 包络 <span class="arithmatex">\(e_m\)</span>。</li>
+</ul>
+<p><strong>Step 3：核心建模计算（实时并行执行，总延迟 &lt; 10 ms）</strong></p>
+<p><strong>（1）肌肉激活动力学</strong></p>
+<p>基于归一化 EMG 包络 <span class="arithmatex">\(e_m\)</span>，通过非线性指数函数计算肌肉激活度 <span class="arithmatex">\(a_m\)</span>：
+$$
+a_m=\frac{e^{Ae_m}-1}{e^{A}-1}
+$$
+其中 A 为校准后的形状因子（-2.999~-0.001），核心优化为<strong>移除人工机电延迟滤波</strong>，避免双重延迟叠加。</p>
+<p><strong>（2）肌肉肌腱运动学</strong></p>
+<p>基于关节角度，通过<strong>多维三次 B 样条模型</strong>直接映射得到 MTU 长度 <span class="arithmatex">\(l_{mt}\)</span>、关节力矩臂 <span class="arithmatex">\(r_{mt}\)</span>，无需复杂运动学推导。</p>
+<p><strong>（3）肌肉肌腱动力学</strong></p>
+<p>结合激活度与运动学参数，基于 Hill 型肌肉模型计算 MTU 力 <span class="arithmatex">\(F_{mt}\)</span>，支持两种肌腱模型：</p>
+<ul>
+<li><strong>刚性肌腱（快速计算）</strong>：假设肌腱长度固定为松弛长度，MTU 长度变化仅由肌纤维长度决定，无需求解复杂方程；</li>
+<li><strong>弹性肌腱（高精度）</strong>：通过 Brent 根求解器迭代平衡肌肉力与肌腱力，考虑肌腱非线性力学特性。</li>
+</ul>
+<p>核心计算逻辑：
+$$
+F_{\text{MTU}} = \left[ a_m f(\tilde{l}_m) + f_P(\tilde{l}_m) \right] F_m^{\text{max}} \cdot \cos(\phi(l_m))
+$$
+其中 <span class="arithmatex">\(f(\tilde{l}_m)\)</span>（主动力 - 长度关系）、<span class="arithmatex">\(f_P(\tilde{l}_m)\)</span>（被动力 - 长度关系）为归一化本构曲线，<span class="arithmatex">\(\phi(l_m)\)</span>为瞬时羽状角。</p>
+<p><strong>（4）关节力矩计算</strong></p>
+<p>对每个关节自由度，汇总跨关节 MTU 的贡献（MTU 力 × 力矩臂），求和得到关节净力矩。</p>
+<h3 id="12">1.2 复现逻辑</h3>
+<p>我将整个代码被重构为两个核心模块：<code>ceinms_core_raw.py</code>（包含纯粹的数学物理模型）和 <code>run_ceinms_raw.py</code>（负责数据流控与管线串联）。总体计算流程被严格划分为<strong>离线准备（Offline Phase）</strong>与<strong>实时循环（Real-Time Phase）</strong>。</p>
+<h4 id="121-b">1.2.1 离线阶段：多维 B 样条运动学代理模型</h4>
+<p>在 OpenSim 中调用 <code>computeMomentArm()</code> 和 <code>getLength()</code> 涉及复杂的几何碰撞与跨关节肌肉路径计算，单次调用即可耗时数毫秒，无法满足实时控制需求（论文要求 &lt;3.1ms）。</p>
+<p>我在离线阶段遍历实验数据的时间步，计算出完整轨迹下的肌肉-肌腱单元长度（<span class="arithmatex">\(l_{mtu}\)</span>）和力臂（<span class="arithmatex">\(r\)</span>）。</p>
+<p>使用 <code>scipy.interpolate.make_interp_spline</code> 对每个肌肉的运动学特征拟合 3 次 B 样条。在实时循环中，仅需传入当前关节角度（或时间戳）即可实现微秒级的查询。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 提取自 run_ceinms_raw.py: 离线阶段 B 样条拟合</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Offline Phase: Fitting Multi-dimensional B-spline surrogates...&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 预计算完整轨迹的运动学特征</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">time_arr</span><span class="p">):</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">model</span><span class="o">.</span><span class="n">realizePosition</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>     <span class="c1"># 更新 OpenSim 状态</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="c1"># 提取并记录每块肌肉的MTU长度和力臂</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">muscle_names</span><span class="p">:</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="n">musc</span> <span class="o">=</span> <span class="n">muscles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="n">raw_kinematics</span><span class="p">[</span><span class="s1">&#39;l_mtu&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">musc</span><span class="o">.</span><span class="n">getLength</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="n">raw_kinematics</span><span class="p">[</span><span class="s1">&#39;r_knee&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">musc</span><span class="o">.</span><span class="n">computeMomentArm</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">coord_knee</span><span class="p">)</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="n">raw_kinematics</span><span class="p">[</span><span class="s1">&#39;r_ankle&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">musc</span><span class="o">.</span><span class="n">computeMomentArm</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">coord_ankle</span><span class="p">)</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># 拟合三次B样条, k=3</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">kinematics_spline</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;l_mtu&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;r_knee&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;r_ankle&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">muscle_names</span><span class="p">:</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">kinematics_spline</span><span class="p">[</span><span class="s1">&#39;l_mtu&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_interp_spline</span><span class="p">(</span><span class="n">time_arr</span><span class="p">,</span> <span class="n">raw_kinematics</span><span class="p">[</span><span class="s1">&#39;l_mtu&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">kinematics_spline</span><span class="p">[</span><span class="s1">&#39;r_knee&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_interp_spline</span><span class="p">(</span><span class="n">time_arr</span><span class="p">,</span> <span class="n">raw_kinematics</span><span class="p">[</span><span class="s1">&#39;r_knee&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">kinematics_spline</span><span class="p">[</span><span class="s1">&#39;r_ankle&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_interp_spline</span><span class="p">(</span><span class="n">time_arr</span><span class="p">,</span> <span class="n">raw_kinematics</span><span class="p">[</span><span class="s1">&#39;r_ankle&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="122-1">1.2.2 实时阶段模块 1：激活动力学</h4>
+<p>对应论文图 1A。该模块将归一化 EMG 信号（<span class="arithmatex">\(e_m\)</span>）转换为肌肉主动收缩水平（<span class="arithmatex">\(a_m\)</span>）。</p>
+<ul>
+<li>
+<p><strong>信号滤波</strong>：采用基于激活/去激活时间常数（<span class="arithmatex">\(\tau_{act}, \tau_{deact}\)</span>）的一阶低通滤波器模拟钙离子释放与回收动力学。</p>
+</li>
+<li>
+<p><strong>非线性映射</strong>：使用指数函数（Shape factor <span class="arithmatex">\(A\)</span>）描述募集非线性。</p>
+</li>
+<li><strong>消除人工延迟</strong>：遵照论文论述，由于系统的端到端处理耗时已接近生理机电延迟（Electromechanical delay, EMD），代码中移除了人工的历史数据缓冲队列，直接处理当前帧，这对于机器人控制的同步性至关重要。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 提取自 ceinms_core_raw.py: 激活动力学计算</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">class</span> <span class="nc">ActivationDynamics</span><span class="p">:</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_factor_A</span><span class="o">=-</span><span class="mf">3.0</span><span class="p">):</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="c1"># 论文 Eq. 1 中的 A 参数 (-0.001 到 -2.999)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">shape_factor_A</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">shape_factor_A</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-4</span> <span class="k">else</span> <span class="o">-</span><span class="mf">0.001</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">prev_u</span> <span class="o">=</span> <span class="mf">0.0</span> 
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="c1"># 预计算公式分母，避免实时循环中逐帧重复计算指数</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">den</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span> 
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emg_norm</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tau_act</span><span class="o">=</span><span class="mf">0.015</span><span class="p">,</span> <span class="n">tau_deact</span><span class="o">=</span><span class="mf">0.050</span><span class="p">):</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="c1"># 移除人工机电延迟排队，直接处理当前信号</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="n">tau</span> <span class="o">=</span> <span class="n">tau_act</span> <span class="k">if</span> <span class="n">emg_norm</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_u</span> <span class="k">else</span> <span class="n">tau_deact</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">beta</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dt</span> <span class="o">/</span> <span class="n">tau</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>        <span class="c1"># 一阶低通滤波模拟钙离子动力学</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>        <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_u</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">emg_norm</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_u</span><span class="p">)</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">prev_u</span> <span class="o">=</span> <span class="n">u</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>        <span class="c1"># 2. 非线性激活映射, 论文 Eq. 1</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>        <span class="n">num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>        <span class="n">a</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">den</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="123-2">1.2.3 实时阶段模块 2：肌肉肌腱动力学</h4>
+<p>对应论文图 1C。这是系统的核心物理引擎，由 <code>MTUSolver</code> 类实现。</p>
+<ul>
+<li><strong>力-长-速关系</strong>：在 <code>CeinmsCurves</code> 中实现了高斯型主动力-长曲线和指数型被动力-长曲线。</li>
+<li><strong>刚性肌腱解析解（核心提速点）</strong>：
+  若采用弹性肌腱（Elastic Tendon），需使用 Brent 方法（<code>scipy.optimize.brentq</code>）寻找使得肌肉力与肌腱力平衡的纤维长度，此过程在 Python 中耗时极大。复现中默认开启 <strong>Stiff Tendon</strong> 模式：
+  假设肌腱不发生形变（<span class="arithmatex">\(l_t = l_{slack}^s\)</span>），通过简单的几何关系即可直接求解肌肉纤维长度 <span class="arithmatex">\(l_m\)</span>：
+  $$
+  l_m \cos(\phi) = l_{mtu} - l_{slack}^s
+  $$
+  结合假设肌肉体积守恒（肌肉厚度 <span class="arithmatex">\(w\)</span> 恒定），我们彻底避免了迭代求解，将单块肌肉的计算时间压缩。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 提取自 ceinms_core_raw.py: 肌肉肌腱核心物理求解 (MTUSolver)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span> <span class="n">l_mtu_current</span><span class="p">):</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stiff_tendon</span><span class="p">:</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        <span class="c1"># 运动学等式: l_mtu = l_slack + l_m * cos(phi)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="n">l_m_cos_phi</span> <span class="o">=</span> <span class="n">l_mtu_current</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_slack</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="c1"># 防止出现非生理的过度压缩导致的数学崩溃</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="k">if</span> <span class="n">l_m_cos_phi</span> <span class="o">&lt;</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_opt</span><span class="p">:</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>            <span class="n">l_m_cos_phi</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_opt</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="c1"># 通过勾股定理直接求得肌纤维长度，避免迭代</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="n">l_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">l_m_cos_phi</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># self.w 为初始化时预计算的肌肉厚度</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="n">cos_phi</span> <span class="o">=</span> <span class="n">l_m_cos_phi</span> <span class="o">/</span> <span class="n">l_m</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">l_m_norm</span> <span class="o">=</span> <span class="n">l_m</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_opt</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="c1"># 计算力</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="n">f_act</span> <span class="o">=</span> <span class="n">activation</span> <span class="o">*</span> <span class="n">CeinmsCurves</span><span class="o">.</span><span class="n">active_force_length</span><span class="p">(</span><span class="n">l_m_norm</span><span class="p">)</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>        <span class="n">f_pas</span> <span class="o">=</span> <span class="n">CeinmsCurves</span><span class="o">.</span><span class="n">passive_force_length</span><span class="p">(</span><span class="n">l_m_norm</span><span class="p">)</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>        <span class="n">F_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_act</span> <span class="o">+</span> <span class="n">f_pas</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_max</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="k">return</span> <span class="n">F_m</span> <span class="o">*</span> <span class="n">cos_phi</span>
+</code></pre></div>
+<h4 id="124-3">1.2.4 实时阶段模块 3：关节力矩计算</h4>
+<p>对应论文图 1D。将单块肌肉计算出的肌腱力 <span class="arithmatex">\(F_{mtu}\)</span> 与 B 样条查询到的瞬时力臂 <span class="arithmatex">\(r\)</span> 相乘，并在关节自由度（DOF）上线性叠加，最终输出估计的生物力矩。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 提取自 run_ceinms_raw.py: 实时预测主循环 (Real-Time Loop)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">m_knee</span> <span class="o">=</span> <span class="mf">0.0</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">m_ankle</span> <span class="o">=</span> <span class="mf">0.0</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 逐样本处理，完全模拟真实硬件流式数据</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">muscle_names</span><span class="p">:</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="c1"># 获取实时输入</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">raw_emg</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">emg_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">emg_map</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">emg_map</span> <span class="k">else</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="c1"># B样条查询 (O(1))</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">l_mtu</span> <span class="o">=</span> <span class="n">kinematics_spline</span><span class="p">[</span><span class="s1">&#39;l_mtu&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">](</span><span class="n">t</span><span class="p">)</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">r_knee</span> <span class="o">=</span> <span class="n">kinematics_spline</span><span class="p">[</span><span class="s1">&#39;r_knee&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">](</span><span class="n">t</span><span class="p">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">r_ankle</span> <span class="o">=</span> <span class="n">kinematics_spline</span><span class="p">[</span><span class="s1">&#39;r_ankle&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">](</span><span class="n">t</span><span class="p">)</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="c1"># 激活动力学前向推演</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="n">activation</span> <span class="o">=</span> <span class="n">act_objects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">raw_emg</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="c1"># 肌肉动力学求解肌腱力</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    <span class="n">force</span> <span class="o">=</span> <span class="n">mtu_objects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">activation</span><span class="p">,</span> <span class="n">l_mtu</span><span class="p">)</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>    <span class="c1"># 关节力矩计算: M = sum(F_mtu * r)</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>    <span class="n">m_knee</span> <span class="o">+=</span> <span class="n">force</span> <span class="o">*</span> <span class="n">r_knee</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>    <span class="n">m_ankle</span> <span class="o">+=</span> <span class="n">force</span> <span class="o">*</span> <span class="n">r_ankle</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="c1"># 保存本帧计算结果</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="n">results</span><span class="p">[</span><span class="s1">&#39;knee_angle_r_moment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_knee</span><span class="p">)</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="n">results</span><span class="p">[</span><span class="s1">&#39;ankle_angle_r_moment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_ankle</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="2">2. 复现结果</h2>
+<blockquote>
+<p>注：此处数据为基于 walk36 数据集的初步测试结果，未接入校准。</p>
+</blockquote>
+<p>测试环境：</p>
+<ul>
+<li><strong>设备名称：</strong>LAPTOP-PMEV3U0L（联想拯救者Y7000P 2022）</li>
+<li><strong>CPU：</strong>12th Gen Intel(R) Core(TM) i7-12700H 14核 2.30 GHz</li>
+<li><strong>GPU：</strong>NVIDIA GeForce RTX 3050 Ti LapTop 4GB</li>
+<li><strong>机带RAM：</strong>16.0 GB (15.8 GB 可用)</li>
+<li><strong>系统类型：</strong>64 位操作系统, 基于 x64 的处理器</li>
+<li><strong>Python版本：</strong>3.8.20</li>
+</ul>
+<p>终端打印输出：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>----------------------------
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>CEINMS-RT<span class="w"> </span>Python<span class="w"> </span>Replication
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>----------------------------
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="o">[</span>info<span class="o">]</span><span class="w"> </span>Loaded<span class="w"> </span>model<span class="w"> </span>3DGaitModel2392<span class="w"> </span>from<span class="w"> </span>file<span class="w"> </span>gait2392.osim
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Initializing<span class="w"> </span>Physics<span class="w"> </span>Models...
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Offline<span class="w"> </span>Phase:<span class="w"> </span>Fitting<span class="w"> </span>Multi-dimensional<span class="w"> </span>B-spline<span class="w"> </span>surrogates...
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>Starting<span class="w"> </span>Real-Time<span class="w"> </span>Simulation<span class="w"> </span>Loop...
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>Frame<span class="w"> </span><span class="m">0</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">0</span>.00s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-10.87<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">3</span>.4018<span class="w"> </span>ms
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>Frame<span class="w"> </span><span class="m">50</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">0</span>.50s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-23.72<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">3</span>.1888<span class="w"> </span>ms
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>Frame<span class="w"> </span><span class="m">100</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">1</span>.00s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-18.44<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">4</span>.4830<span class="w"> </span>ms
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>Frame<span class="w"> </span><span class="m">150</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">1</span>.50s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span><span class="m">0</span>.75<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">2</span>.7699<span class="w"> </span>ms
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>Frame<span class="w"> </span><span class="m">200</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">2</span>.00s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-21.69<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">3</span>.1509<span class="w"> </span>ms
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>...
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>Frame<span class="w"> </span><span class="m">5850</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">58</span>.50s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-12.49<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">4</span>.7512<span class="w"> </span>ms
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>Frame<span class="w"> </span><span class="m">5900</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">59</span>.00s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-23.61<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">4</span>.8282<span class="w"> </span>ms
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>Frame<span class="w"> </span><span class="m">5950</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">59</span>.50s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-21.35<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">3</span>.2418<span class="w"> </span>ms
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>Frame<span class="w"> </span><span class="m">6000</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">60</span>.00s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span><span class="m">5</span>.84<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">3</span>.3417<span class="w"> </span>ms
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>Frame<span class="w"> </span><span class="m">6050</span>/6097<span class="w"> </span><span class="p">|</span><span class="w"> </span>T:<span class="w"> </span><span class="m">60</span>.50s<span class="w"> </span><span class="p">|</span><span class="w"> </span>Knee<span class="w"> </span>M:<span class="w"> </span>-19.73<span class="w"> </span>Nm<span class="w"> </span><span class="p">|</span><span class="w"> </span>Delay:<span class="w"> </span><span class="m">5</span>.0380<span class="w"> </span>ms
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>Real-Time<span class="w"> </span>loop<span class="w"> </span>finished<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">22</span>.9833<span class="w"> </span>s
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>CEINMS-RT<span class="w"> </span>LATENCY
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="w">  </span>Average:<span class="w"> </span><span class="m">3</span>.7614<span class="w"> </span>ms
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="w">  </span>Median:<span class="w">  </span><span class="m">3</span>.3901<span class="w"> </span>ms
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="w">  </span>Max:<span class="w">     </span><span class="m">12</span>.2812<span class="w"> </span>ms
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="w">  </span>Min:<span class="w">     </span><span class="m">1</span>.5078<span class="w"> </span>ms
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a>
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a>Results<span class="w"> </span>saved<span class="w"> </span>to:<span class="w"> </span>result_ceinms_moments.sto
+<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a>
+<a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>Error<span class="w"> </span>vs<span class="w"> </span>Inverse<span class="w"> </span>Dynamics<span class="w"> </span><span class="o">(</span>ID<span class="o">)</span>
+<a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a><span class="w">  </span>Knee<span class="w">  </span>-<span class="w"> </span>RMSE<span class="w"> </span>Normalized:<span class="w"> </span><span class="m">0</span>.1849<span class="w"> </span>Nm/kg
+<a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a><span class="w">  </span>Ankle<span class="w"> </span>-<span class="w"> </span>RMSE<span class="w"> </span>Normalized:<span class="w"> </span><span class="m">0</span>.3360<span class="w"> </span>Nm/kg
+</code></pre></div>
+<p>令我惊喜的是，即使是计算复杂的解释性语言Python，运行该CEINMS-RT算法产生的的延迟仍然能显著小于人体腿部肌肉的 EMD （<strong>30~50 ms</strong>），虽然比论文中的“低于生理机电延迟（&lt; 3.1ms）”稍逊，但考虑到C++在实时计算中理论上会比Python快10~50倍，所以可以预见，该算法完全具备部署于高频机器人控制循环的潜力。</p>
+<p>至于力矩估计的精度，通过将 CEINMS-RT 前向预测的力矩与 OpenSim ID 算出的参考力矩进行对比，得到以下统计指标</p>
+<blockquote>
+<p>此处使用未校准的模型默认参数！</p>
+</blockquote>
+<ul>
+<li><strong>右膝关节</strong>：归一化的均方误差为 <strong>0.1849 Nm/kg</strong></li>
+<li><strong>右踝关节 </strong>：归一化的均方误差为 <strong>0.3360 Nm/kg</strong></li>
+</ul>
+<p>论文中呈现的误差是：<strong>0.37±0.12 Nm/kg</strong>，我复现出的结果与原文一致。</p>
+<p><img alt="" src="pics/noCli.png" /></p>
+<hr />
+<h2 id="4">4. 分析与讨论</h2>
+<ol>
+<li><strong>计算架构的合理性与 Python 的局限性</strong>：
+   本节复现成功验证了 CEINMS-RT 的提速哲学：<strong>将非线性最优化问题转移到离线阶段，将复杂的偏微分方程降级为代数解析解</strong>。值得注意的是，原论文底层使用 C++ 实现，而本复现使用了 Python。Python 存在全局解释器锁（GIL）和循环开销，但在采用了“刚性肌腱假设”和“B 样条直接求值”后，依然在单核上实现了低延迟。这从侧面证明了该算法在数学层面的高效性。</li>
+<li><strong>不可忽视的被动张力（Passive Force）问题</strong>：
+   从图中观察到，如果不进行参数校准，直接使用 OpenSim 的默认肌肉参数（如 <span class="arithmatex">\(l_{opt}, l_{slack}\)</span>），在步态的某些阶段，模型会输出异常高的被动弹性力（上图中踝关节力矩的3处异常）。刚性肌腱由于无法通过拉伸肌腱来缓冲肌肉形变，更容易导致肌肉纤维被过度拉伸。这解释了原论文为何强调 <strong>Calibration（校准）</strong> 是必需的前置步骤。</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.top", "toc.integrate"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.ad660dcc.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

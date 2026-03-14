@@ -1,0 +1,710 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Qiucheng Zhao">
+      
+      
+      
+        <link rel="prev" href="Calibration.html">
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
+    
+    
+      
+        <title>Linux上的docker部署 - CEINMS-RT 复现报告</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#docker-ceinms-rt" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="index.html" title="CEINMS-RT 复现报告" class="md-header__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CEINMS-RT 复现报告
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Linux上的docker部署
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="CEINMS-RT-Core.html" class="md-tabs__link">
+        
+  
+    
+  
+  核心算法复现
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="Calibration.html" class="md-tabs__link">
+        
+  
+    
+  
+  参数校准算法
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="CEINMS-RT-docker.html" class="md-tabs__link">
+        
+  
+    
+  
+  Linux上的docker部署
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="CEINMS-RT 复现报告" class="md-nav__button md-logo" aria-label="CEINMS-RT 复现报告" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    CEINMS-RT 复现报告
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CEINMS-RT-Core.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    核心算法复现
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Calibration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    参数校准算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Linux上的docker部署
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="CEINMS-RT-docker.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Linux上的docker部署
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      设备信息
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      复现过程 &amp; 踩坑总结
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="复现过程 & 踩坑总结">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      准备阶段
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      启动容器
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      编译核心
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      运行测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="docker-ceinms-rt">在 Docker 中复现 CEINMS-RT 记录</h1>
+<p><strong>项目地址</strong>：https://github.com/CEINMS-RT/ceinmsrt-core-cpp<br />
+<strong>项目论文</strong>：Sartori et al., 2025, "CEINMS-RT: an open-source framework for the continuous neuro-mechanical model-based control of wearable robots" (IEEE Transactions on Medical Robotics and Bionics)<br />
+<strong>复现目标</strong>：在本地复现实时 EMG-driven 神经肌肉骨骼模型，跑通实时/离线模式，生成关节力矩、肌肉力等输出。</p>
+<h2 id="_1">设备信息</h2>
+<ul>
+<li><strong>笔记本</strong>：联想拯救者 Y7000P 2022  </li>
+<li>CPU：Intel Core i7-12700H (14 核 20 线程)  </li>
+<li>内存：16GB DDR4  </li>
+<li>显卡：NVIDIA RTX 3050Ti Laptop GPU 4GB  </li>
+<li><strong>操作系统</strong>：Ubuntu 22.04 LTS (Jammy Jellyfish)  </li>
+<li>桌面环境：GNOME on Xorg</li>
+<li><strong>Docker</strong>：Docker Desktop for Linux  </li>
+</ul>
+<h2 id="_2">复现过程 &amp; 踩坑总结</h2>
+<h3 id="_3">准备阶段</h3>
+<blockquote>
+<p>最开始看到该项目中涉及的包非常多，其中大部分我之前已经装在windows上了，我担心直接跑要解决很多版本冲突的bug污染环境，于是选择到笔记本上的Ubuntu22.04系统上运行该项目。</p>
+</blockquote>
+<p>先Clone项目：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/CEINMS-RT/ceinmsrt-core-cpp
+</code></pre></div>
+<p>拉取官方镜像（该docker image中已预装 OpenSim）:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>be1et/ceinms-platform:latest
+</code></pre></div>
+<blockquote>
+<p>docker desktop不能直连，我尝试了很多国内镜像源均失效。最后发现可以在docker desktop的<code>settings</code>-<code>Resources</code>中将<code>Proxies-Proxy mode</code>改为<code>Manual configuration</code>，根据clash上的端口填写就可以直接访问了，我将Bypass proxy设置为：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>localhost,127.0.0.1,::1,*.docker.internal,hubproxy.docker.internal,192.168.0.0/16,172.17.0.0/16,172.18.0.0/16,10.0.0.0/8
+</code></pre></div>
+</blockquote>
+<h3 id="_4">启动容器</h3>
+<p>拉取好镜像之后启动容器，经过反复尝试我总结出以下命令：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--name<span class="w"> </span>ceinms-rt<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">DISPLAY</span><span class="o">=</span>:1<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">QT_X11_NO_MITSHM</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">QT_QPA_PLATFORM</span><span class="o">=</span>xcb<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>-v<span class="w"> </span>/tmp/.X11-unix:/tmp/.X11-unix:rw<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span>-v<span class="w"> </span><span class="nv">$HOME</span>/.Xauthority:/root/.Xauthority:ro<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/workspace/ceinmsrt-core-cpp<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span>--net<span class="o">=</span>host<span class="w"> </span>--privileged<span class="w"> </span>--ipc<span class="o">=</span>host<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span>be1et/ceinms-platform:latest<span class="w"> </span>/bin/bash
+</code></pre></div></p>
+<p>我的Linux桌面环境让xeyes 不能正常显示，我先禁用 GUI。</p>
+<p>现在就已经进入容器了</p>
+<blockquote>
+<p>也可以在docker中直接run</p>
+</blockquote>
+<h3 id="_5">编译核心</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">cd</span><span class="w"> </span>/workspace/ceinmsrt-core-cpp
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>rm<span class="w"> </span>-rf<span class="w"> </span>build
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-DOpenSim_DIR<span class="o">=</span>/opensim_install/lib/cmake/OpenSim
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span><span class="w">  </span>
+</code></pre></div>
+<p>期间报错：<code>c++: fatal error: Killed signal terminated program cc1plus</code> → Docker Desktop 内存默认低，Settings → Resources → Memory 增加为 8GB即可。</p>
+<p>最终编译成功，生成 <code>bin/Unix/CEINMS</code> 和 <code>calibrate</code></p>
+<h3 id="_6">运行测试</h3>
+<p>先 clone 示例模型：
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">cd</span><span class="w"> </span>/workspace/ceinmsrt-core-cpp/bin/Unix
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/CEINMS-RT/LowerLimbModel.git
+</code></pre></div></p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>在<code>workspace/ceinmsrt-core-cpp/bin/Unix</code>下新建<code>cfg</code>文件夹，把<code>LowerLimbModel</code>中的<code>SplineCoeff</code>复制到<code>cfg</code>中，便于<code>ceinms</code>读取。</li>
+</ul>
+<blockquote>
+<p>最好将<code>LowerLimbModel</code>文件夹克隆到cfg文件夹，便于用相对路径</p>
+</blockquote>
+<ul>
+<li>这个下肢模型是基于win版本开发的，其没有做操作系统识别，所以在<code>executionRT.xml</code>文件中需要将<code>Device</code>改为适用于linux的<code>.so</code>文件（原文件中是适用于win的<code>.dll</code>）
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&lt;EMGDevice&gt;</span>libPluginEMG0.so<span class="nt">&lt;/EMGDevice&gt;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&lt;EMGDeviceFile&gt;</span>cfg/LowerLimbModel/executionEMG.xml<span class="nt">&lt;/EMGDeviceFile&gt;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="cm">&lt;!-- &lt;AngleDevice&gt;plugin/RTOSIM_Plugin/lib/Debug/RTOSIMPlugin.dll&lt;/AngleDevice&gt; --&gt;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&lt;AngleDevice&gt;</span>libPluginAngle0.so<span class="nt">&lt;/AngleDevice&gt;</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">&lt;AngleDeviceFile&gt;</span>cfg/LowerLimbModel/executionIK_scale.xml<span class="nt">&lt;/AngleDeviceFile&gt;</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>...
+</code></pre></div></li>
+</ul>
+<p><strong>成功运行命令</strong>：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>/workspace/ceinmsrt-core-cpp/bin/Unix
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># 先在命令行内输出，不启用GUI</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">QT_QPA_PLATFORM</span><span class="o">=</span>offscreen
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>./CEINMS<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span>-e<span class="w"> </span>/workspace/LowerLimbModel/executionRT.xml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span>-s<span class="w"> </span>/workspace/LowerLimbModel/data/subjectCalibrated.xml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span>-r<span class="w"> </span>results_test_walk36<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span>-v<span class="w"> </span><span class="m">3</span>
+</code></pre></div>
+<p>日志显示开始计算：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>QStandardPaths:<span class="w"> </span>XDG_RUNTIME_DIR<span class="w"> </span>not<span class="w"> </span>set,<span class="w"> </span>defaulting<span class="w"> </span>to<span class="w"> </span><span class="s1">&#39;/tmp/runtime-root&#39;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">|</span>C<span class="p">|</span>E<span class="p">|</span>I<span class="p">|</span>N<span class="p">|</span>M<span class="p">|</span>S<span class="p">|</span>-<span class="p">|</span>R<span class="p">|</span>T<span class="p">|</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">|</span>C<span class="p">|</span>a<span class="p">|</span>l<span class="p">|</span>i<span class="p">|</span>b<span class="p">|</span>r<span class="p">|</span>a<span class="p">|</span>t<span class="p">|</span>e<span class="p">|</span>d<span class="p">|</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>+-+-+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">|</span>E<span class="p">|</span>M<span class="p">|</span>G<span class="p">|</span>-<span class="p">|</span>I<span class="p">|</span>n<span class="p">|</span>f<span class="p">|</span>o<span class="p">|</span>r<span class="p">|</span>m<span class="p">|</span>e<span class="p">|</span>d<span class="p">|</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="p">|</span>N<span class="p">|</span>e<span class="p">|</span>u<span class="p">|</span>r<span class="p">|</span>o<span class="p">|</span>m<span class="p">|</span>u<span class="p">|</span>s<span class="p">|</span>c<span class="p">|</span>u<span class="p">|</span>l<span class="p">|</span>o<span class="p">|</span>s<span class="p">|</span>k<span class="p">|</span>e<span class="p">|</span>l<span class="p">|</span>e<span class="p">|</span>t<span class="p">|</span>a<span class="p">|</span>l<span class="p">|</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="p">|</span>R<span class="p">|</span>e<span class="p">|</span>a<span class="p">|</span>l<span class="p">|</span>-<span class="p">|</span>t<span class="p">|</span>i<span class="p">|</span>m<span class="p">|</span>e<span class="p">|</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="p">|</span>T<span class="p">|</span>o<span class="p">|</span>o<span class="p">|</span>l<span class="p">|</span>b<span class="p">|</span>o<span class="p">|</span>x<span class="p">|</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>+-+-+-+-+-+-+-+
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="p">|</span>L<span class="p">|</span>I<span class="p">|</span>N<span class="p">|</span>U<span class="p">|</span>X<span class="p">|</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>+-+-+-+-+-+-+-+
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>Copyright<span class="w"> </span><span class="o">(</span>C<span class="o">)</span><span class="w"> </span><span class="m">2026</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>David<span class="w"> </span>LLoyd,<span class="w"> </span>Monica<span class="w"> </span>Reggiani,<span class="w"> </span>Massimo<span class="w"> </span>Sartori,<span class="w"> </span>Claudio<span class="w"> </span>Pizzolato,<span class="w"> </span>Guillaume<span class="w"> </span>Durandau
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>/workspace/ceinmsrt-core-cpp/src/CEINMS.cpp:<span class="w"> </span><span class="m">256</span><span class="w"> </span>--<span class="w"> </span>Model:<span class="w"> </span>RealTimeOpenLoopExponentialActivationStiffTendonOnline.
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>libPluginAngle0.so
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>/workspace/ceinmsrt-core-cpp/lib/Producers/DevicePlugin/EMG0plugin.cpp:<span class="w"> </span><span class="m">26</span><span class="w"> </span>--<span class="w"> </span>init<span class="w"> </span>EMG<span class="w"> </span>lib
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>Plugin<span class="w"> </span>Angle0plugin,<span class="w"> </span>initialisation<span class="w"> </span><span class="k">done</span>.
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>/workspace/ceinmsrt-core-cpp/lib/Producers/DevicePlugin/EMG0plugin.cpp:<span class="w"> </span><span class="m">49</span><span class="w"> </span>--<span class="w"> </span>Plugin<span class="w"> </span>EMG0plugin,<span class="w"> </span>initialisation<span class="w"> </span><span class="k">done</span>.
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>/workspace/ceinmsrt-core-cpp/lib/Producers/FromExtDevice/LmtMaFromMTUSpline.cpp:<span class="w"> </span><span class="m">79</span><span class="w"> </span>--<span class="w"> </span>LMT:<span class="w"> </span>waiting<span class="w"> </span><span class="k">for</span><span class="w"> </span>dof<span class="w"> </span>names...
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>/workspace/ceinmsrt-core-cpp/lib/Producers/FromExtDevice/LmtMaFromMTUSpline.cpp:<span class="w"> </span><span class="m">89</span><span class="w"> </span>--<span class="w"> </span>LMT:<span class="w"> </span>waiting<span class="w"> </span><span class="k">for</span><span class="w"> </span>muscle<span class="w"> </span>names...
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>/workspace/ceinmsrt-core-cpp/lib/Producers/FromExtDevice/LmtMaFromMTUSpline.cpp:<span class="w"> </span><span class="m">98</span><span class="w"> </span>--<span class="w"> </span>LMT:<span class="w"> </span>waiting<span class="w"> </span><span class="k">for</span><span class="w"> </span>muscle<span class="w"> </span>names...<span class="w"> </span>Done
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>/workspace/ceinmsrt-core-cpp/lib/Producers/FromExtDevice/LmtMaFromMTUSpline.cpp:<span class="w"> </span><span class="m">125</span><span class="w"> </span>--<span class="w"> </span>LMT:<span class="w"> </span>waiting<span class="w"> </span><span class="k">for</span><span class="w"> </span>ready<span class="w"> </span>to<span class="w"> </span>start...
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>/workspace/ceinmsrt-core-cpp/lib/ModelEvaluation/ModelEvaluationRealTime.cpp:<span class="w"> </span><span class="m">219</span><span class="w"> </span>--<span class="w"> </span>NMS:<span class="w"> </span>waiting<span class="w"> </span><span class="k">for</span><span class="w"> </span>ready<span class="w"> </span>To<span class="w"> </span>Start<span class="w"> </span>...
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a>...
+</code></pre></div>
+<p>在输出文件夹 <code>results_test/</code>中会生成以下文件：</p>
+<ul>
+<li>Activations.sto</li>
+<li>MuscleForces.sto</li>
+<li>Torque.sto（关节力矩，最重要）</li>
+<li>FibreLengths.sto / FibreVelocities.sto</li>
+<li>lmt.sto / ma_*.sto（力臂）</li>
+<li>emg.sto 等</li>
+</ul>
+<p>不过由于当前运行没有外部数据输入，所以以上文件中均为零输入下的计算结果（恒定值），只能证明当前项目配置能跑通。</p>
+<p>接下来加入<code>LowerLimbModel</code>文件夹中的<code>walk36</code>数据试试：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>./CEINMS<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>-e<span class="w"> </span>/workspace/LowerLimbModel/executionRT.xml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>-s<span class="w"> </span>/workspace/LowerLimbModel/data/subjectCalibrated.xml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>-p<span class="w"> </span>/workspace/LowerLimbModel/data/walk36<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span>-r<span class="w"> </span>results_test_walk36<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span>-v<span class="w"> </span><span class="m">3</span>
+</code></pre></div>
+<p>输出报错：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>QStandardPaths:<span class="w"> </span>XDG_RUNTIME_DIR<span class="w"> </span>not<span class="w"> </span>set,<span class="w"> </span>defaulting<span class="w"> </span>to<span class="w"> </span><span class="s1">&#39;/tmp/runtime-root&#39;</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="p">|</span>C<span class="p">|</span>E<span class="p">|</span>I<span class="p">|</span>N<span class="p">|</span>M<span class="p">|</span>S<span class="p">|</span>-<span class="p">|</span>R<span class="p">|</span>T<span class="p">|</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="p">|</span>C<span class="p">|</span>a<span class="p">|</span>l<span class="p">|</span>i<span class="p">|</span>b<span class="p">|</span>r<span class="p">|</span>a<span class="p">|</span>t<span class="p">|</span>e<span class="p">|</span>d<span class="p">|</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>+-+-+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="p">|</span>E<span class="p">|</span>M<span class="p">|</span>G<span class="p">|</span>-<span class="p">|</span>I<span class="p">|</span>n<span class="p">|</span>f<span class="p">|</span>o<span class="p">|</span>r<span class="p">|</span>m<span class="p">|</span>e<span class="p">|</span>d<span class="p">|</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">|</span>N<span class="p">|</span>e<span class="p">|</span>u<span class="p">|</span>r<span class="p">|</span>o<span class="p">|</span>m<span class="p">|</span>u<span class="p">|</span>s<span class="p">|</span>c<span class="p">|</span>u<span class="p">|</span>l<span class="p">|</span>o<span class="p">|</span>s<span class="p">|</span>k<span class="p">|</span>e<span class="p">|</span>l<span class="p">|</span>e<span class="p">|</span>t<span class="p">|</span>a<span class="p">|</span>l<span class="p">|</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="p">|</span>R<span class="p">|</span>e<span class="p">|</span>a<span class="p">|</span>l<span class="p">|</span>-<span class="p">|</span>t<span class="p">|</span>i<span class="p">|</span>m<span class="p">|</span>e<span class="p">|</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>+-+-+-+-+-+-+-+-+-+
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="p">|</span>T<span class="p">|</span>o<span class="p">|</span>o<span class="p">|</span>l<span class="p">|</span>b<span class="p">|</span>o<span class="p">|</span>x<span class="p">|</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>+-+-+-+-+-+-+-+
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="p">|</span>L<span class="p">|</span>I<span class="p">|</span>N<span class="p">|</span>U<span class="p">|</span>X<span class="p">|</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>+-+-+-+-+-+-+-+
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>Copyright<span class="w"> </span><span class="o">(</span>C<span class="o">)</span><span class="w"> </span><span class="m">2026</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>David<span class="w"> </span>LLoyd,<span class="w"> </span>Monica<span class="w"> </span>Reggiani,<span class="w"> </span>Massimo<span class="w"> </span>Sartori,<span class="w"> </span>Claudio<span class="w"> </span>Pizzolato,<span class="w"> </span>Guillaume<span class="w"> </span>Durandau
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>/workspace/ceinmsrt-core-cpp/src/CEINMS.cpp:<span class="w"> </span><span class="m">256</span><span class="w"> </span>--<span class="w"> </span>Model:<span class="w"> </span>RealTimeOpenLoopExponentialActivationStiffTendonOnline.
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>/workspace/ceinmsrt-core-cpp/lib/Producers/FromExtDevice/DynLib.cpp:<span class="w"> </span><span class="m">48</span><span class="w"> </span>--<span class="w"> </span>Cannot<span class="w"> </span>open<span class="w"> </span>plugin<span class="w"> </span>because<span class="w"> </span>the<span class="w"> </span>file<span class="w"> </span><span class="sb">`</span>/workspace/ceinmsrt-core-cpp/bin/Unix/.so<span class="sb">`</span><span class="w"> </span>cannot<span class="w"> </span>be<span class="w"> </span>opened<span class="w"> </span>-<span class="w"> </span>verify<span class="w"> </span>the<span class="w"> </span>path<span class="w"> </span>is<span class="w"> </span>correct<span class="w"> </span>and<span class="w"> </span>the<span class="w"> </span>file<span class="w"> </span>exists
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>Segmentation<span class="w"> </span>fault
+</code></pre></div>
+<p><code>/workspace/ceinmsrt-core-cpp/bin/Unix/.so</code> cannot be opened 这个报错我暂时还没有解决，我现在排除到的bug来源是：</p>
+<ul>
+<li>当加上<code>-p</code>参数时，CEINMS 内部会触发 <strong>“offline mode override”</strong>（论文里提到 -p 会 overrule execution.xml）。这个 override 逻辑把 <ConsumerPlugin> 里的 <EMGDevice> 和 <AngleDevice> <strong>全部清空或跳过解析</strong>了，导致传给 DynLib 的 libpath 变成空字符串。</li>
+</ul>
+<p>但我尝试了禁用插件以及直接在<code>executionRT.xml</code>指定数据文件，依然无法离线计算。</p>
+<blockquote>
+<p>遂转至windows自己编写python项目复现算法，如前两节所见。</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.top", "toc.integrate"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.ad660dcc.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
