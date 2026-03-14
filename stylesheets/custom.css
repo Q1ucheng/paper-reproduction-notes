@@ -42,3 +42,24 @@ code, pre, kbd {
 .md-header__title {
     font-size: 1.2rem !important; 
 }
+
+/* =========================================
+   加粗文本 (Bold) 强化
+========================================= */
+
+/* 针对正文里的 **加粗文本** */
+.md-typeset strong, .md-typeset b {
+    font-weight: 700 !important;
+    
+    /* 👇 核心魔法：普通文字的描边我们设置了 0.25px，这里我们把它翻倍甚至更多，拉开粗细对比！ */
+    -webkit-text-stroke: 0.45px currentColor !important;
+    
+    /* （可选魔法）如果你觉得光靠描边还不够厚重，可以解除下面这行代码的注释，加一层极微弱的阴影 */
+    text-shadow: 0 0 0.5px currentColor !important;
+}
+
+/* 同样，确保各级标题也足够粗犷醒目 */
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4, .md-typeset h5, .md-typeset h6 {
+    font-weight: 700 !important;
+    -webkit-text-stroke: 0.5px currentColor !important; /* 给标题也加点描边 */
+}
