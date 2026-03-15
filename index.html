@@ -441,7 +441,7 @@
 <li><strong>理解并验证前向动力学管线</strong>：实现从表面肌电信号（sEMG）到肌肉激活度（Activation），再到肌肉力（Muscle Force），最后映射为关节力矩（Joint Moment）的完整物理计算链路。</li>
 <li><strong>验证其实时性优化策略</strong>：原论文的核心贡献在于打破了离线优化模型的算力瓶颈。本次复现重点实现了其提到的两大提速策略：</li>
 <li><strong>运动学查表查值</strong>：离线拟合多维 B 样条曲线（B-splines），将复杂的 OpenSim 肌肉运动学计算转化为 O(1) 复杂度的实时查询。</li>
-<li><strong>刚性肌腱假设（Stiff Tendon）</strong>：消除弹性肌腱模型中耗时的隐式微分方程，代之以解析解。</li>
+<li><strong>刚性肌腱假设</strong>：消除弹性肌腱模型中耗时的隐式微分方程，代之以解析解。</li>
 <li><strong>精度评估</strong>：将前向估计的关节力矩与 OpenSim ID的计算结果进行对比分析。</li>
 <li><strong>肌肉参数校准</strong>：通过模拟退火算法，最小化前向估计与 OpenSim ID 结果的均方误差（MSE）。</li>
 </ol>
@@ -455,13 +455,13 @@
 </blockquote>
 </li>
 <li>
-<p><a href="CEINMS-RT-Core.html">📊 CEINMS-RT 核心算法复现报告</a> </p>
+<p><a href="CEINMS-RT-Core.html">📊 CEINMS-RT 核心算法复现</a> </p>
 <blockquote>
 <p>在windows上基于Python复现了前向动力学管线，验证了实时性优化策略。力矩计算与OpenSim ID结果的误差在论文范围以内，计算延迟从30ms降至3ms。</p>
 </blockquote>
 </li>
 <li>
-<p><a href="Calibration.html">📊 CEINMS-RT 参数校准算法复现与验证</a> </p>
+<p><a href="Calibration.html">📊 CEINMS-RT 参数校准算法复现</a> </p>
 <blockquote>
 <p>复现了参数校准算法，成功校准了模型参数，降低了力矩计算误差，但存在可优化空间。</p>
 </blockquote>

@@ -550,17 +550,17 @@ F_{\text{MTU}} = \left[ a_m f(\tilde{l}_m) + f_P(\tilde{l}_m) \right] F_m^{\text
 <h3 id="12">1.2 复现逻辑</h3>
 <p>我将整个代码被重构为两个核心模块：<code>ceinms_core_raw.py</code>（包含纯粹的数学物理模型）和 <code>run_ceinms_raw.py</code>（负责数据流控与管线串联）。总体计算流程被严格划分为<strong>离线准备（Offline Phase）</strong>与<strong>实时循环（Real-Time Phase）</strong>。</p>
 <h4 id="120">1.2.0 数据读取</h4>
-<p>作为一种“肌电驱动（EMG-driven）”的神经肌肉骨骼模型，CEINMS-RT 的前向推演需要依赖特定的生物力学边界条件和神经驱动输入。在本复现脚本中，我使用了经典的下肢步态数据集（<code>walk36</code>）以及 OpenSim 的 <code>gait2392</code> 模型进行管线验证。</p>
+<p>作为一种“肌电驱动”的神经肌肉骨骼模型，CEINMS-RT 的前向推演需要依赖特定的生物力学边界条件和神经驱动输入。在本复现脚本中，我使用了经典的下肢步态数据集（<code>walk36</code>）以及 OpenSim 的 <code>gait2392</code> 模型进行管线验证。</p>
 <p>具体而言，脚本主要读取并解析了以下四类核心数据文件：</p>
 <ol>
 <li>
 <p><strong><code>gait2392.osim</code> (肌肉骨骼模型)</strong>：包含受试者的骨骼几何特征、肌肉附着点（肌腱路径）以及肌肉的初始通用参数（如最大等长肌力 <span class="arithmatex">\(F_{max}\)</span>、最佳纤维长度 <span class="arithmatex">\(l_{opt}\)</span> 等）。这是物理引擎运作的几何基础。</p>
 </li>
 <li>
-<p><strong><code>ik.sto</code> (逆向运动学数据)</strong>：提供了时间序列上的各个关节角度（Joint Angles）。算法依赖这些角度输入，在离线阶段结合 OpenSim API 计算瞬时的肌肉-肌腱长度（<span class="arithmatex">\(l_{mtu}\)</span>）与力臂（<span class="arithmatex">\(r\)</span>）。</p>
+<p><strong><code>ik.sto</code> (逆向运动学数据)</strong>：提供了时间序列上的各个关节角度。算法依赖这些角度输入，在离线阶段结合 OpenSim API 计算瞬时的肌肉-肌腱长度（<span class="arithmatex">\(l_{mtu}\)</span>）与力臂（<span class="arithmatex">\(r\)</span>）。</p>
 </li>
 <li>
-<p><strong><code>emgFilt.sto</code> (滤波后的表面肌电)</strong>：经过带通滤波、全波整流和包络提取后的归一化肌电信号。它作为模型唯一的“主动控制信号”，输入给激活动力学（Activation Dynamics）模块。</p>
+<p><strong><code>emgFilt.sto</code> (滤波后的表面肌电)</strong>：经过带通滤波、全波整流和包络提取后的归一化肌电信号。它作为模型唯一的“主动控制信号”，输入给激活动力学 Activation Dynamics 模块。</p>
 </li>
 <li>
 <p><strong><code>id.sto</code> (逆向动力学数据)</strong>：这是通过传统刚体动力学算出的“真实”关节力矩。在 CEINMS-RT 前向推理中，它<strong>不参与物理计算</strong>，仅作为 Ground Truth用于最终预测精度的误差对比以及参数校准阶段的目标函数参考值。</p>
@@ -696,7 +696,7 @@ F_{\text{MTU}} = \left[ a_m f(\tilde{l}_m) + f_P(\tilde{l}_m) \right] F_m^{\text
 <ul>
 <li><strong>力-长-速关系</strong>：在 <code>CeinmsCurves</code> 中实现了高斯型主动力-长曲线和指数型被动力-长曲线。</li>
 <li><strong>刚性肌腱解析解（核心提速点）</strong>：
-  若采用弹性肌腱（Elastic Tendon），需使用 Brent 方法（<code>scipy.optimize.brentq</code>）寻找使得肌肉力与肌腱力平衡的纤维长度，此过程在 Python 中耗时极大。复现中默认开启 <strong>Stiff Tendon</strong> 模式：
+  若采用弹性肌腱，需使用 Brent 方法（<code>scipy.optimize.brentq</code>）寻找使得肌肉力与肌腱力平衡的纤维长度，此过程在 Python 中耗时极大。复现中默认开启 <strong>Stiff Tendon</strong> 模式：
   假设肌腱不发生形变（<span class="arithmatex">\(l_t = l_{slack}^s\)</span>），通过简单的几何关系即可直接求解肌肉纤维长度 <span class="arithmatex">\(l_m\)</span>：</li>
 </ul>
 <div class="arithmatex">\[
@@ -813,7 +813,7 @@ l_m \cos(\phi) = l_{mtu} - l_{slack}^s
 </blockquote>
 <ul>
 <li><strong>右膝关节</strong>：归一化的均方误差为 <strong>0.1849 Nm/kg</strong></li>
-<li><strong>右踝关节 </strong>：归一化的均方误差为 <strong>0.3360 Nm/kg</strong></li>
+<li><strong>右踝关节</strong>：归一化的均方误差为 <strong>0.3360 Nm/kg</strong></li>
 </ul>
 <p>论文中呈现的误差是：<strong>0.37±0.12 Nm/kg</strong>，我复现出的结果与原文一致。</p>
 <p><img alt="" src="pics/noCli.png" /></p>
@@ -823,7 +823,7 @@ l_m \cos(\phi) = l_{mtu} - l_{slack}^s
 <li><strong>计算架构的合理性与 Python 的局限性</strong>：
    本节复现成功验证了 CEINMS-RT 的提速哲学：<strong>将非线性最优化问题转移到离线阶段，将复杂的偏微分方程降级为代数解析解</strong>。值得注意的是，原论文底层使用 C++ 实现，而本复现使用了 Python。Python 存在全局解释器锁（GIL）和循环开销，但在采用了“刚性肌腱假设”和“B 样条直接求值”后，依然在单核上实现了低延迟。这从侧面证明了该算法在数学层面的高效性。</li>
 <li><strong>不可忽视的被动张力（Passive Force）问题</strong>：
-   从图中观察到，如果不进行参数校准，直接使用 OpenSim 的默认肌肉参数（如 <span class="arithmatex">\(l_{opt}, l_{slack}\)</span>），在步态的某些阶段，模型会输出异常高的被动弹性力（上图中踝关节力矩的3处异常）。刚性肌腱由于无法通过拉伸肌腱来缓冲肌肉形变，更容易导致肌肉纤维被过度拉伸。这解释了原论文为何强调 <strong>Calibration（校准）</strong> 是必需的前置步骤。</li>
+   从图中观察到，如果不进行参数校准，直接使用 OpenSim 的默认肌肉参数（如 <span class="arithmatex">\(l_{opt}, l_{slack}\)</span>），在步态的某些阶段，模型会输出异常高的被动弹性力（上图中踝关节力矩的3处异常）。刚性肌腱由于无法通过拉伸肌腱来缓冲肌肉形变，更容易导致肌肉纤维被过度拉伸。这解释了原论文为何强调 <strong>Calibration</strong> 是必需的前置步骤。</li>
 </ol>
 
 

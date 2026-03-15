@@ -533,7 +533,7 @@
 </ol>
 <hr />
 <h2 id="3">3. 核心代码解析</h2>
-<p>展示校准器中最为核心的<strong>目标函数计算</strong>与<strong>优化器调用</strong>逻辑。通过封装 <code>OptimizationTracker</code>，我们还实现了实时的终端 Loss 下降监控。</p>
+<p>展示校准器中最为核心的<strong>目标函数计算</strong>与<strong>优化器调用</strong>逻辑。通过封装 <code>OptimizationTracker</code>，我还实现了实时的终端 Loss 下降监控。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 提取自 calibration_raw.py: 目标函数定义</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_factors</span><span class="p">):</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -565,9 +565,9 @@
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="c1"># 采用 SciPy 的 dual_annealing 实现模拟退火全局优化</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">dual_annealing</span><span class="p">(</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>             <span class="c1"># 缩放边界: [0.5, 2.0]</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="n">maxiter</span><span class="o">=</span><span class="n">MAX_ITERATIONS</span><span class="p">,</span>    <span class="c1"># 论文中提到校准耗时较长，控制最大迭代</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">initial_temp</span><span class="o">=</span><span class="mf">5230.0</span><span class="p">,</span>       <span class="c1"># 初始退火温度</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>  <span class="c1"># 缩放边界: [0.5, 2.0]</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="n">maxiter</span><span class="o">=</span><span class="n">MAX_ITERATIONS</span><span class="p">,</span>  <span class="c1"># 论文中提到校准耗时较长，控制最大迭代</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">initial_temp</span><span class="o">=</span><span class="mf">5230.0</span><span class="p">,</span>  <span class="c1"># 初始退火温度</span>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">visit</span><span class="o">=</span><span class="mf">2.62</span><span class="p">,</span>
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">accept</span><span class="o">=-</span><span class="mf">5.0</span>
 <a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="p">)</span>
