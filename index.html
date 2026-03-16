@@ -426,7 +426,7 @@
                   
 
 
-<h1 id="welcome">Welcome !</h1>
+<h1 id="welcome">Welcome 👋 !</h1>
 <h2 id="_1">简介与复现目标</h2>
 <p>基于论文 <em>《CEINMS-RT: an open-source framework for the continuous neuro-mechanical model-based control of wearable robots》</em></p>
 <p><strong>论文开源资源：</strong></p>
@@ -449,19 +449,19 @@
 <p>按照时间顺序我的复现进度如下：</p>
 <ul>
 <li>
-<p><a href="CEINMS-RT-docker.html">🐳 在 Docker 中复现 CEINMS-RT 记录</a> </p>
+<p><a href="CEINMS-RT-docker.html">🐳 在 Docker 中复现 CEINMS-RT 记录（3.3 - 3.7）</a> </p>
 <blockquote>
 <p>尝试在Linux中先用作者提供的docker容器跑通项目，实时计算功能测试成功，但离线计算仍有bug未解决。</p>
 </blockquote>
 </li>
 <li>
-<p><a href="CEINMS-RT-Core.html">📊 CEINMS-RT 核心算法复现</a> </p>
+<p><a href="CEINMS-RT-Core.html">📊 CEINMS-RT 核心算法复现（3.8 - 3.11）</a> </p>
 <blockquote>
 <p>在windows上基于Python复现了前向动力学管线，验证了实时性优化策略。力矩计算与OpenSim ID结果的误差在论文范围以内，计算延迟从30ms降至3ms。</p>
 </blockquote>
 </li>
 <li>
-<p><a href="Calibration.html">📊 CEINMS-RT 参数校准算法复现</a> </p>
+<p><a href="Calibration.html">📊 CEINMS-RT 参数校准算法复现（3.11 - 3.13）</a> </p>
 <blockquote>
 <p>复现了参数校准算法，成功校准了模型参数，降低了力矩计算误差，但存在可优化空间。</p>
 </blockquote>
